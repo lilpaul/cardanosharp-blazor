@@ -1,6 +1,6 @@
 ﻿using CardanoSharp.Blazor.Components.Models;
 
-namespace CardanoSharp.Blazor.Components
+namespace CardanoSharp.Blazor.Components.Interfaces
 {
 	/// <summary>
 	/// CIP30 Compliant full interface as per https://cips.cardano.org/cips/cip30/
