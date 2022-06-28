@@ -42,24 +42,27 @@ namespace CardanoSharp.Blazor.Components.Interfaces
 		/// <summary>
 		/// cardano.{walletName}.apiVersion: String
 		/// The version number of the API that the wallet supports.
-		/// return type is ValueTask<string> instead of string as we still have to invoke js interop which is async
+		/// method instead attribute and return type is ValueTask<string> instead of string as we still have to invoke
+		/// js interop which is async
 		/// </summary>
-		ValueTask<string> ApiVersion { get; }
+		ValueTask<string> ApiVersion();
 
 		/// <summary>
 		/// cardano.{walletName}.name: String
 		/// A name for the wallet which can be used inside of the dApp for the purpose of asking the user which
 		/// wallet they would like to connect with.
-		/// return type is ValueTask<string> instead of string as we still have to invoke js interop which is async
+		/// method instead attribute and return type is ValueTask<string> instead of string as we still have to invoke
+		/// js interop which is async
 		/// </summary>
-		ValueTask<string> Name { get; }
+		ValueTask<string> Name();
 
 		/// <summary>
 		/// cardano.{walletName}.icon: String
 		/// A URI image (e.g. data URI base64 or other) for img src for the wallet which can be used inside of the
 		/// dApp for the purpose of asking the user which wallet they would like to connect with.
-		/// return type is ValueTask<string> instead of string as we still have to invoke js interop which is async
+		/// method instead attribute and return type is ValueTask<string> instead of string as we still have to invoke
+		/// js interop which is async
 		/// </summary>
-		ValueTask<string> Icon { get; }
+		ValueTask<string> Icon();
 	}
 }
