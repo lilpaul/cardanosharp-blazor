@@ -47,6 +47,7 @@ namespace CardanoSharp.Blazor.Components.Interfaces
 		/// So requiring the amount parameter would be a by-spec behavior for a wallet. Not requiring it is possible,
 		/// but not specified, so dapps should not rely on that and the behavior is not recommended....
 		/// (check class summary link for full description)
+		/// parameter is named collateralParams instead of 'params' as per spec due to params being reserved word
 		/// </summary>
 		/// <param name="collateralParams"></param>
 		/// <returns></returns>
