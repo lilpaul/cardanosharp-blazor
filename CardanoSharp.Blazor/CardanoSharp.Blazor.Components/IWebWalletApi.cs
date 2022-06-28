@@ -3,7 +3,7 @@
 namespace CardanoSharp.Blazor.Components
 {
 	/// <summary>
-	/// CIP30 Compliant interface as per https://cips.cardano.org/cips/cip30/
+	/// CIP30 Compliant full interface as per https://cips.cardano.org/cips/cip30/
 	/// </summary>
 	public interface IWebWalletApi
 	{
