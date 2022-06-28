@@ -204,7 +204,7 @@
         {
             if (myWebWallets.Connected)
             {
-                var result = await myWebWallets.GetCollateral(new CollateralParams() { Amount = 5 });
+                var result = await myWebWallets.GetCollateral(5);
                 DisplayResult.Clear();
                 if (result != null)
                 {

@@ -356,8 +356,10 @@
         return utxoCbors;
     }
 
-    public async ValueTask<Utxo[]> GetCollateral(CollateralParams collateralParams)
+    public async ValueTask<Utxo[]> GetCollateral(int amount)
     {
+        var amountCbor = CBORObject.FromSimpleValue(amount).EncodeToBytes().ToStringHex();
+        var collateralParams = new CollateralParams() { Amount = amountCbor };
         var utxoCbors = await GetCollateralCbor(collateralParams);
         var utxoList = new List<Utxo>();
         foreach (var utxoCbor in utxoCbors)
