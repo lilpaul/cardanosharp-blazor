@@ -12,12 +12,21 @@
 
 @inject IJSRuntime JS
 
-
-<div>
+<div class="wwc-container">
     <button @onclick="@(async () => await ConnectClick())">Connect</button>
 </div>
 
 @code {
+    [Parameter]
+    public bool OutputDebug { get; set; }
+    [Parameter]
+    public string Header { get; set; } = "Choose Your Wallet";
+    [Parameter]
+    public bool AutoCloseOnConnect { get; set; }
+    [Parameter]
+    public bool AutoCloseOnDisconnect { get; set; }
+    [Parameter]
+    public bool HideOnModalClick { get; set; } = true;
     [Parameter]
     public List<WalletExtension> SupportedExtensions { get; set; } = new List<WalletExtension>()
     {
@@ -40,6 +49,10 @@
             Url = "https://namiwallet.io" 
         },
     };
+    [Parameter]
+    public EventCallback OnConnect { get; set; }
+    [Parameter]
+    public EventCallback OnDisconnect { get; set; }
 
     private DotNetObjectReference<WebWalletConnector>? _selfReference;
     private WebWalletConnectorJsInterop? _webWalletConnectorJs;
@@ -52,9 +65,10 @@
         {
             _webWalletConnectorJs = new WebWalletConnectorJsInterop(JS);
         }
-        //check which wallets are installed
-        //set up initial _wallets state from above
+
         _selfReference = DotNetObjectReference.Create(this);
+        await _webWalletConnectorJs.Init(_selfReference);
+
         _plugins = new List<PluginState>();
         foreach (var extension in SupportedExtensions)
         {
@@ -62,6 +76,17 @@
             var initialApi = new WebWalletInitialApi(JS, extension.Key);
             _plugins.Add(new PluginState(extension, installed, initialApi));
         }
+    }
+
+    public void ShowConnectWalletDialog()
+    {
+        
+    }
+
+
+    public void HideConnectWalletDialog()
+    {
+        
     }
 
     private async ValueTask ConnectClick()
@@ -76,6 +101,14 @@
         catch (Exception ex)
         {
             Console.WriteLine(ex.ToString());
+        }
+    }
+
+    private void Debug(string text)
+    {
+        if (OutputDebug)
+        {
+            Console.WriteLine(text);
         }
     }
 }
