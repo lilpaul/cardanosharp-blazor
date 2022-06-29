@@ -12,7 +12,7 @@ namespace CardanoSharp.Blazor.Components
         {
             _jsRuntime = jsRuntime;
             _moduleTask = new(() => _jsRuntime.InvokeAsync<IJSObjectReference>(
-               "import", "./_content/CardanoSharp.Blazor.Components/WalletConnectorJsInterop.js").AsTask());
+               "import", "./_content/CardanoSharp.Blazor.Components/WebWalletConnectorJsInterop.js").AsTask());
         }
 
         public async ValueTask Init(DotNetObjectReference<WalletConnector> webWalletConnectorObj)
