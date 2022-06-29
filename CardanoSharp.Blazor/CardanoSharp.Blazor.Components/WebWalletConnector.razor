@@ -1,6 +1,8 @@
 ﻿@using Microsoft.JSInterop
 @using CardanoSharp.Blazor.Components.JSInterop
 @using CardanoSharp.Blazor.Components.Models
+@using CardanoSharp.Wallet.Enums
+@using System.Globalization;
 
 @inject IJSRuntime JS
 
@@ -33,11 +35,21 @@
         },
     };
 
+    private DotNetObjectReference<WebWalletConnector>? _selfReference;
+    private WebWalletConnectorJsInterop? _webWalletConnectorJs;
     private WebWalletApi? _connectedWallet;
     private WebWalletInitialApi? _initialApi;
 
     protected override async Task OnInitializedAsync()
     {
+        if (_webWalletConnectorJs == null)
+        {
+            _webWalletConnectorJs = new WebWalletConnectorJsInterop(JS);
+        }
+        //check which wallets are installed
+        //set up initial _wallets state from above
+        _selfReference = DotNetObjectReference.Create(this);
+
         _initialApi = new WebWalletInitialApi(JS, "nami");
     }
 
@@ -53,6 +65,51 @@
         catch (Exception ex)
         {
             Console.WriteLine(ex.ToString());
+        }
+    }
+
+    private class PluginState : WalletExtension
+    {
+        public bool Installed { get; set; }
+    }
+
+    private class WalletState : WalletExtension
+    {
+        public NetworkType Network { get; set; }
+        public ulong Balance { get; set; }
+
+
+        public string BalanceAdaPortion
+        {
+            get
+            {
+                var temp = (Balance / 1000000).ToString("N", CultureInfo.CreateSpecificCulture("en-US"));
+                return temp.Substring(0, temp.IndexOf('.'));
+            }
+        }
+
+        public string BalanceLovelacePortion
+        {
+            get
+            {
+                return (Balance % 1000000).ToString("D6");
+            }
+        }
+
+        public string CoinCurrency
+        {
+            get
+            {
+                if (Network == NetworkType.Mainnet)
+                {
+                    return "₳";
+                }
+                else if (Network == NetworkType.Testnet)
+                {
+                    return "t₳";
+                }
+                return "";
+            }
         }
     }
 }
