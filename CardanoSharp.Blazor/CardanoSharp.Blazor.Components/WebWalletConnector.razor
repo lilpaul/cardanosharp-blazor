@@ -6,7 +6,7 @@
 
 
 <div>
-    <button @onclick="ConnectClick">Connect</button>
+    <button @onclick="@(async () => await ConnectClick())">Connect</button>
 </div>
 
 @code {
@@ -41,8 +41,18 @@
         _initialApi = new WebWalletInitialApi(JS, "nami");
     }
 
-    private void ConnectClick()
+    private async ValueTask ConnectClick()
     {
-        Console.WriteLine("CLICK");
+        try
+        {
+            var walletApi = await _initialApi!.Enable();
+            _connectedWallet = new WebWalletApi(walletApi);
+            var changeAddress = await _connectedWallet.GetChangeAddress();
+            Console.WriteLine($"CHANGE ADDR: {changeAddress}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.ToString());
+        }
     }
 }
