@@ -6,7 +6,7 @@
 
 
 <div>
-
+    <button @onclick="ConnectClick">Connect</button>
 </div>
 
 @code {
@@ -33,7 +33,16 @@
         },
     };
 
-	private WebWalletApi? _connectedWallet;
+    private WebWalletApi? _connectedWallet;
+    private WebWalletInitialApi? _initialApi;
 
+    protected override async Task OnInitializedAsync()
+    {
+        _initialApi = new WebWalletInitialApi(JS, "nami");
+    }
 
+    private void ConnectClick()
+    {
+        Console.WriteLine("CLICK");
+    }
 }
