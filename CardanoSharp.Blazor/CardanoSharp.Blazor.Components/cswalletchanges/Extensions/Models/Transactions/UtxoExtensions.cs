@@ -1,8 +1,5 @@
-﻿using CardanoSharp.Wallet.Extensions;
-using CardanoSharp.Wallet.Extensions.Models.Transactions;
-using CardanoSharp.Wallet.Models.Transactions;
+﻿using CardanoSharp.Wallet.Models.Transactions;
 using PeterO.Cbor2;
-using System.Linq;
 
 namespace CardanoSharp.Wallet.Extensions.Models.Transactions
 {
@@ -74,11 +71,7 @@ namespace CardanoSharp.Wallet.Extensions.Models.Transactions
             utxo.Value = tempOutput.Value.Coin;
             if (tempOutput.Value.MultiAsset != null && tempOutput.Value.MultiAsset.Count > 0)
             {
-                utxo.AssetList = tempOutput.Value.MultiAsset.SelectMany(
-                    x => x.Value.Token.Select(
-                        y => new Asset() { PolicyId = x.Key, Name = y.Key, Quantity = y.Value }
-                        )
-                    );
+                utxo.AssetList = tempOutput.Value.MultiAsset.ToAssetList();
             }
             return utxo;
         }

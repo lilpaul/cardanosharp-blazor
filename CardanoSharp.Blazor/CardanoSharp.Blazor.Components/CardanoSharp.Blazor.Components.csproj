@@ -28,8 +28,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CardanoSharp.Wallet" Version="2.5.0" />
+    <PackageReference Include="CardanoSharp.Wallet" Version="2.8.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Components\WalletConnector\" />
+    <Folder Include="Components\WebWalletConnector\" />
   </ItemGroup>
 
 </Project>
