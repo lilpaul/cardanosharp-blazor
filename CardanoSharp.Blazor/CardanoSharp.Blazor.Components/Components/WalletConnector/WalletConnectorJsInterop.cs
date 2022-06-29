@@ -19,7 +19,9 @@ namespace CardanoSharp.Blazor.Components
         private IJSObjectReference? _jsWalletConnector;
 
         public bool Initialized { get; private set; }
+
         public WalletExtension? ConnectedWallet { get; private set; }
+
         public List<WalletExtensionState>? Wallets { get; private set; }
 
         public WalletConnectorJsInterop(IJSRuntime jsRuntime)
@@ -40,7 +42,7 @@ namespace CardanoSharp.Blazor.Components
             foreach (var wallet in supportedWallets)
             {
                 var walletState = new WalletExtensionState(wallet);
-                if (!String.IsNullOrEmpty(walletState.Key))
+                if (!string.IsNullOrEmpty(walletState.Key))
                 {
                     walletState.Installed = await IsWalletInstalled(walletState.Key);
                     Wallets.Add(walletState);
@@ -54,7 +56,7 @@ namespace CardanoSharp.Blazor.Components
         {
             try
             {
-                return await _jsWalletConnector.InvokeAsync<bool>("isWalletInstalled", key);
+                return await _jsWalletConnector!.InvokeAsync<bool>("isWalletInstalled", key);
             }
             catch (JSException ex)
             {
@@ -66,7 +68,7 @@ namespace CardanoSharp.Blazor.Components
         {
             try
             {
-                return await _jsWalletConnector.InvokeAsync<bool>("isWalletEnabled", key);
+                return await _jsWalletConnector!.InvokeAsync<bool>("isWalletEnabled", key);
             }
             catch (JSException ex)
             {
@@ -78,7 +80,7 @@ namespace CardanoSharp.Blazor.Components
         {
             try
             {
-                return await _jsWalletConnector.InvokeAsync<string>("getWalletApiVersion", key);
+                return await _jsWalletConnector!.InvokeAsync<string>("getWalletApiVersion", key);
             }
             catch (JSException ex)
             {
@@ -90,7 +92,7 @@ namespace CardanoSharp.Blazor.Components
         {
             try
             {
-                return await _jsWalletConnector.InvokeAsync<string>("getWalletName", key);
+                return await _jsWalletConnector!.InvokeAsync<string>("getWalletName", key);
             }
             catch (JSException ex)
             {
@@ -102,7 +104,7 @@ namespace CardanoSharp.Blazor.Components
         {
             try
             {
-                return await _jsWalletConnector.InvokeAsync<string>("getWalletIcon", key);
+                return await _jsWalletConnector!.InvokeAsync<string>("getWalletIcon", key);
             }
             catch (JSException ex)
             {
@@ -114,7 +116,7 @@ namespace CardanoSharp.Blazor.Components
         {
             try
             {
-                return await _jsWalletConnector.InvokeAsync<bool>("connectWallet", key);
+                return await _jsWalletConnector!.InvokeAsync<bool>("connectWallet", key);
             }
             catch (JSException ex)
             {
@@ -127,7 +129,7 @@ namespace CardanoSharp.Blazor.Components
             try
             {
                 ConnectedWallet = null;
-                await _jsWalletConnector.InvokeVoidAsync("disconnect");
+                await _jsWalletConnector!.InvokeVoidAsync("disconnect");
             }
             catch (JSException ex)
             {
@@ -139,7 +141,7 @@ namespace CardanoSharp.Blazor.Components
         {
             try
             {
-                var networkId = await _jsWalletConnector.InvokeAsync<int>("getNetworkId");
+                var networkId = await _jsWalletConnector!.InvokeAsync<int>("getNetworkId");
                 return networkId;
             }
             catch (JSException ex)
@@ -152,7 +154,7 @@ namespace CardanoSharp.Blazor.Components
         {
             try
             {
-                var utxos = await _jsWalletConnector.InvokeAsync<string[]>("getUtxos", amountCbor, paginate);
+                var utxos = await _jsWalletConnector!.InvokeAsync<string[]>("getUtxos", amountCbor, paginate);
                 return utxos;
             }
             catch (JSException ex)
@@ -165,7 +167,7 @@ namespace CardanoSharp.Blazor.Components
         {
             try
             {
-                var utxos = await _jsWalletConnector.InvokeAsync<string[]>("getCollateral", collateralParams);
+                var utxos = await _jsWalletConnector!.InvokeAsync<string[]>("getCollateral", collateralParams);
                 return utxos;
             }
             catch (JSException ex)
@@ -178,7 +180,7 @@ namespace CardanoSharp.Blazor.Components
         {
             try
             {
-                var balance = await _jsWalletConnector.InvokeAsync<string>("getBalance");
+                var balance = await _jsWalletConnector!.InvokeAsync<string>("getBalance");
                 return balance;
             }
             catch (JSException ex)
@@ -191,7 +193,7 @@ namespace CardanoSharp.Blazor.Components
         {
             try
             {
-                var addresses = await _jsWalletConnector.InvokeAsync<string[]>("getUsedAddresses", paginate);
+                var addresses = await _jsWalletConnector!.InvokeAsync<string[]>("getUsedAddresses", paginate);
                 return addresses;
             }
             catch (JSException ex)
@@ -204,7 +206,7 @@ namespace CardanoSharp.Blazor.Components
         {
             try
             {
-                var addresses = await _jsWalletConnector.InvokeAsync<string[]>("getUsedAddresses");
+                var addresses = await _jsWalletConnector!.InvokeAsync<string[]>("getUsedAddresses");
                 return addresses;
             }
             catch (JSException ex)
@@ -217,7 +219,7 @@ namespace CardanoSharp.Blazor.Components
         {
             try
             {
-                var address = await _jsWalletConnector.InvokeAsync<string>("getChangeAddress");
+                var address = await _jsWalletConnector!.InvokeAsync<string>("getChangeAddress");
                 return address;
             }
             catch (JSException ex)
@@ -230,7 +232,7 @@ namespace CardanoSharp.Blazor.Components
         {
             try
             {
-                var addresses = await _jsWalletConnector.InvokeAsync<string[]>("getRewardAddresses");
+                var addresses = await _jsWalletConnector!.InvokeAsync<string[]>("getRewardAddresses");
                 return addresses;
             }
             catch (JSException ex)
@@ -243,7 +245,7 @@ namespace CardanoSharp.Blazor.Components
         {
             try
             {
-                var cborWitnessSet = await _jsWalletConnector.InvokeAsync<string>("signTx", txCbor, partialSign);
+                var cborWitnessSet = await _jsWalletConnector!.InvokeAsync<string>("signTx", txCbor, partialSign);
                 return cborWitnessSet;
             }
             catch (JSException ex)
@@ -256,7 +258,7 @@ namespace CardanoSharp.Blazor.Components
         {
             try
             {
-                var dataSignature = await _jsWalletConnector.InvokeAsync<DataSignature>("signData", address, hexData);
+                var dataSignature = await _jsWalletConnector!.InvokeAsync<DataSignature>("signData", address, hexData);
                 return dataSignature;
             }
             catch (JSException ex)
@@ -269,7 +271,7 @@ namespace CardanoSharp.Blazor.Components
         {
             try
             {
-                var txHash = await _jsWalletConnector.InvokeAsync<string>("submitTx", txCbor);
+                var txHash = await _jsWalletConnector!.InvokeAsync<string>("submitTx", txCbor);
                 return txHash;
             }
             catch (JSException ex)
