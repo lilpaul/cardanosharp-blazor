@@ -1,0 +1,37 @@
+﻿@page "/webwalletconnectortest"
+@using CardanoSharp.Blazor.Components;
+@using CardanoSharp.Blazor.Components.Models;
+@using CardanoSharp.Blazor.Components.Enums;
+@using CardanoSharp.Blazor.TestApp.Shared;
+@using CardanoSharp.Wallet.Models.Transactions
+@using CardanoSharp.Wallet.Extensions;
+@using CardanoSharp.Wallet.Extensions.Models.Transactions;
+@using CardanoSharp.Wallet.Encoding;
+
+@inject HttpClient Http
+
+<PageTitle>Web Wallet Connector V2 Test</PageTitle>
+
+<h1>Web Wallet Connector V2 Test</h1>
+
+<WebWalletConnector @ref="_connector">
+</WebWalletConnector>
+
+<div>
+    <span>RESULTS</span>
+    @foreach (var displayItem in DisplayResult)
+    {
+    <div>
+        @displayItem
+    </div>
+    }
+</div>
+<hr/>
+
+@code {
+    private WebWalletConnector? _connector;
+
+    private List<string> DisplayResult = new List<string>();
+
+
+}
