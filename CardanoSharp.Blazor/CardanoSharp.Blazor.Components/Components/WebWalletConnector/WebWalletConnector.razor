@@ -13,7 +13,7 @@
 @inject IJSRuntime JS
 
 <div class="wwc-container">
-    <div class="wwc-connector-connect-button" @onclick="ShowConnectWalletDialog">
+    <div class="wwc-connector-connect-button" @onclick="@(async () => await ShowConnectWalletDialogAsync())">
         @if (!Connected)
         {
             <span>Connect Wallet</span>
@@ -33,18 +33,36 @@
                     {
                         @if (Connected)
                         {
-                            <div>SHOW CONNECTED WALLET</div>
+                            <div class="wwc-wallet-container">
+                                <span class="wwc-wallet-title">@_connectedWallet!.Name Wallet</span>
+                                <img class="wwc-wallet-icon" src="@_connectedWallet.Icon" title="@_connectedWallet.Name" />
+                                <div class="wwc-wallet-balance-container">
+                                    <div class="wwc-wallet-balance-header-container">
+                                        <span class="wwc-wallet-balance-header-text">Balance</span>
+                                    </div>
+
+                                </div>
+                            </div>
                         }
                         else
                         {
                             <div class="wwc-choose-header">
                                 @Header
                             </div>
-                            <div class="wwc-choose-list">
+                            <div class="wwc-plugin-list">
                                 @foreach (var plugin in _plugins!)
                                 {
                                     <div class="wwc-plugin-container">
-                                        @plugin.Name
+                                        <span class="wwc-plugin-title">@plugin.Name Wallet</span>
+                                        <img class="wwc-plugin-icon" src="@plugin.Icon" title="@plugin.Name" />
+                                        @if (plugin.Installed)
+                                        {
+                                            <div class="wwc-plugin-button" @onclick="@(async () => await ConnectPluginClickAsync(plugin))">Connect</div>
+                                        }
+                                        else
+                                        {
+                                            <a class="wwc-plugin-button" href="@plugin.Url" target="_blank">Install</a>
+                                        }
                                     </div>
                                 }
                             </div>
@@ -117,7 +135,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Debug("OnInitializedAsync");
         if (_webWalletConnectorJs == null)
         {
             _webWalletConnectorJs = new WebWalletConnectorJsInterop(JS);
@@ -136,12 +153,11 @@
     }
 
     [JSInvokable]
-    public void ShowConnectWalletDialog()
+    public async ValueTask ShowConnectWalletDialogAsync()
     {
-        Debug("ShowConnectWalletDialog");
         if (Connected && RefreshBalanceOnShowPopup)
         {
-            RefreshConnectedWallet();
+            await RefreshConnectedWalletAsync();
         }
         _showPopup = true;
         StateHasChanged();
@@ -150,35 +166,31 @@
     [JSInvokable]
     public void HideConnectWalletDialog()
     {
-        Debug("HideConnectWalletDialog");
         _showPopup = false;
         StateHasChanged();
     }
 
-    public void RefreshConnectedWallet()
+    public async ValueTask RefreshConnectedWalletAsync()
     {
-        Debug("RefreshConnectedWallet");
-        _connectedWallet!.RefreshBalanceAsync();
-    }
-
-
-    private void ConnectorConnectClick()
-    {
-        Debug("ConnectorConnectClick");
-        ShowConnectWalletDialog();
+        await _connectedWallet!.RefreshBalanceAsync();
     }
 
     protected void ModalClick()
     {
-        Debug("ModalClick");
         HideConnectWalletDialog();
     }
 
-    private void Debug(string text)
+    private async ValueTask ConnectPluginClickAsync(PluginState plugin)
     {
-        if (OutputDebug)
+        var connectedWallet = await plugin.ConnectAsync();
+        if (connectedWallet != null) await connectedWallet.InitAsync();
+        if (connectedWallet != null && connectedWallet.Initialized)
         {
-            Console.WriteLine(text);
+            _connectedWallet = connectedWallet;
+        }
+        else
+        {
+            _connectedWallet = null;
         }
     }
 }

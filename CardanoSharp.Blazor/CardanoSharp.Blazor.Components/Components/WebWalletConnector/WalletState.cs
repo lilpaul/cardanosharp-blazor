@@ -30,7 +30,7 @@ namespace CardanoSharp.Blazor.Components
 			}
 		}
 
-		public WalletState(WalletExtension walletExtension, IWebWalletApi api)
+		public WalletState(WalletExtension walletExtension, IWebWalletApi api) : base(walletExtension)
 		{
 			if (walletExtension == null) throw new ArgumentNullException(nameof(walletExtension));
 			if (api == null) throw new ArgumentNullException(nameof(api));
@@ -46,8 +46,12 @@ namespace CardanoSharp.Blazor.Components
 
 		public async ValueTask RefreshBalanceAsync()
 		{
+			var balanceValue = new TransactionOutputValue() { MultiAsset = new Dictionary<byte[], NativeAsset>() };
 			var balanceCbor = await Api.GetBalance().ConfigureAwait(false);
-			var balanceValue = balanceCbor.HexToByteArray().DeserializeTransactionOutputValue();
+			if (string.IsNullOrEmpty(balanceCbor) && balanceCbor != "00")
+			{
+				balanceValue = balanceCbor.HexToByteArray().DeserializeTransactionOutputValue();
+			}
 			TokenPreservation = balanceValue.MultiAsset.CalculateMinUtxoLovelace();
 			Balance = balanceValue.Coin;
 			Assets.Clear();

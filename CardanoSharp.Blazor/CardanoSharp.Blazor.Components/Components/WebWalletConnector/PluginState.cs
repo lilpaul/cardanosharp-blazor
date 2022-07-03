@@ -32,10 +32,9 @@ namespace CardanoSharp.Blazor.Components
 				await wallet.InitAsync();
 				return wallet;
 			}
-			catch (JSException ex)
+			catch
 			{
-				//catch and return null as user clicking cancel in wallet plugin can result exception
-				//depending on wallet implementation
+				//valid user refusal can cause exception
 				return null;
 			}
 		}

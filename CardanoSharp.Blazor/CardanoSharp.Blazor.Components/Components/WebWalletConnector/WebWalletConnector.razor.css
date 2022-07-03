@@ -34,15 +34,85 @@
 	margin: 15% auto; /* 15% from the top and centered */
 	padding: 1em;
 	border: 1px solid #888;
+	border-radius: 0.5em;
 	width: fit-content;
 	height: fit-content;
+	flex-direction: column;
+}
+
+.wwc-wallet-container {
+	display: inline-flex;
+	flex-direction: column;
+	align-items: center;
+	border: 1px solid grey;
+	border-radius: 1em;
+	padding: 0.5em;
+	margin: 0.2em;
+}
+
+.wwc-wallet-title {
+	font-size: 1.5em;
+}
+
+.wwc-wallet-icon {
+	max-width: 110px;
+	max-height: 95px;
+}
+
+.wwc-wallet-balance-container {
+	display: inline-flex;
+	flex-direction: column;
+}
+
+.wwc-wallet-balance-header-container {
+	display: inline-flex;
+	width: auto;
+	justify-content: center;
+	align-items: center
+}
+
+.wwc-wallet-balance-header-text {
+	font-size: 1.5em;
 }
 
 .wwc-choose-header {
+	justify-content: center;
+	display: inline-flex;
+	font-size: 1.5em;
 }
 
-.wwc-choose-list {
+.wwc-plugin-list {
+	max-width: 38em;
 }
 
 .wwc-plugin-container {
+	display: inline-flex;
+	flex-direction: column;
+	align-items: center;
+	border: 1px solid grey;
+	border-radius: 1em;
+	padding: 0.5em;
+	margin: 0.2em;
+}
+
+.wwc-plugin-title {
+	font-size: 1.5em;
+}
+
+.wwc-plugin-icon {
+	max-width: 110px;
+	max-height: 95px;
+}
+
+.wwc-plugin-button {
+	color: black;
+	display: inline-flex;
+	border: 1px solid grey;
+	border-radius: 0.5em;
+	padding: 0.5em;
+	margin: 0.5em 0;
+	cursor: pointer;
+	min-width: 6em;
+	justify-content: center;
+	text-decoration: none;
 }
