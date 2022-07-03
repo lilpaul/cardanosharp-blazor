@@ -16,22 +16,74 @@
 
 <WebWalletConnector @ref="_connector" OutputDebug="true">
 </WebWalletConnector>
-
+<br/><br/>
+<select class="form-control selectpicker" @bind="Test">
+    <option>Choose Test</option>
+    <option>Get Network</option>
+    <option>Get UTxOs</option>
+    <option>Get Collateral</option>
+    <option>Get Balance</option>
+    <option>Get Used Addresses</option>
+    <option>Get Unused Addresses</option>
+    <option>Get Change Address</option>
+    <option>Get Reward Addresses</option>
+    <option>Sign Tx</option>
+    <option>Sign Data</option>
+    <option>Submit Tx</option>
+</select>
+<br/>
+@if (Test == "Get UTxOs")
+{
+    <div>
+        Amount: <input type="text" @bind="GetUtxoAmountCbor" />
+    </div>
+    <div>
+        Paginate - Page (-1 = dont use): <input type="number" @bind="GetUtxoPage" />
+    </div>
+    <div>
+        Paginate - Limit (-1 = dont use): <input type="number" @bind="GetUtxoLimit" />
+    </div>
+}
+<br/>
+<button disabled="@(Test == "Choose Test")" onclick="@(async () => await RunTestAsync() )">Go</button>
+<hr/>
+<span>RESULTS</span>
+<hr/>
 <div>
-    <span>RESULTS</span>
     @foreach (var displayItem in DisplayResult)
     {
-    <div>
-        @displayItem
-    </div>
+        <div>
+            @displayItem
+        </div>
     }
 </div>
-<hr/>
 
 @code {
     private WebWalletConnector? _connector;
-
     private List<string> DisplayResult = new List<string>();
+    private string Test = "Choose Test";
+    private string GetUtxoAmountCbor = "";
+    private int GetUtxoPage = -1;
+    private int GetUtxoLimit = -1;
 
-
+    private async ValueTask RunTestAsync()
+    {
+        DisplayResult.Clear();
+        switch(Test)
+        {
+            case "Get Network":
+                DisplayResult.Add((await _connector!.ConnectedWallet!.Api.GetNetworkId()).ToString());
+                break;
+            case "Get UTxOs" when string.IsNullOrEmpty(GetUtxoAmountCbor):
+                DisplayResult.AddRange(await _connector!.ConnectedWallet!.Api.GetUtxos());
+                break;
+            case "Get UTxOs" when GetUtxoPage < 0 || GetUtxoLimit < 0:
+                DisplayResult.AddRange(await _connector!.ConnectedWallet!.Api.GetUtxos(GetUtxoAmountCbor));
+                break;
+            case "Get UTxOs":
+                DisplayResult.AddRange(await _connector!.ConnectedWallet!.Api.GetUtxos(GetUtxoAmountCbor,
+                new Paginate() { Page = GetUtxoPage, Limit = GetUtxoLimit }));
+                break;
+        }
+    }
 }
