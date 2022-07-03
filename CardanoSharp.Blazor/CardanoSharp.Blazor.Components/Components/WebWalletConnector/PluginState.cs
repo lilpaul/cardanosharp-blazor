@@ -29,7 +29,7 @@ namespace CardanoSharp.Blazor.Components
 				if (apiJsObj == null) return null;
 				var api = new WebWalletApi(apiJsObj);
 				var wallet = new WalletState(this, api);
-				await wallet.InitAsync();
+				await wallet.RefreshWalletAsync();
 				return wallet;
 			}
 			catch

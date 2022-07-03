@@ -64,7 +64,7 @@
                                     <div class="wwc-wallet-balance-tokens">
                                         <span>Collectibles @_connectedWallet.Assets.Count</span>
                                     </div>
-                                    <div class="wwc-wallet-button" @onclick="@(() => DisconnectPluginClick())">Disconnect</div>
+                                    <div class="wwc-wallet-button" @onclick="@(async () => await DisconnectPluginClickAsync())">Disconnect</div>
                                 </div>
                             </div>
                         }
@@ -151,6 +151,14 @@
         }
     }
 
+    public WalletState? ConnectedWallet
+    {
+        get
+        {
+            return _connectedWallet;
+        }
+    }
+
     private DotNetObjectReference<WebWalletConnector>? _selfReference;
     private WebWalletConnectorJsInterop? _webWalletConnectorJs;
     private List<PluginState>? _plugins;
@@ -196,7 +204,7 @@
 
     public async ValueTask RefreshConnectedWalletAsync()
     {
-        await _connectedWallet!.RefreshBalanceAsync();
+        await _connectedWallet!.RefreshWalletAsync();
     }
 
     protected void ModalClick()
@@ -207,7 +215,7 @@
     private async ValueTask ConnectPluginClickAsync(PluginState plugin)
     {
         var connectedWallet = await plugin.ConnectAsync();
-        if (connectedWallet != null) await connectedWallet.InitAsync();
+        if (connectedWallet != null) await connectedWallet.RefreshWalletAsync();
         if (connectedWallet != null && connectedWallet.Initialized)
         {
             _connectedWallet = connectedWallet;
@@ -216,10 +224,12 @@
         {
             _connectedWallet = null;
         }
+        await OnConnect.InvokeAsync();
     }
 
-    private void DisconnectPluginClick()
+    private async ValueTask DisconnectPluginClickAsync()
     {
         _connectedWallet = null;
+        await OnDisconnect.InvokeAsync();
     }
 }

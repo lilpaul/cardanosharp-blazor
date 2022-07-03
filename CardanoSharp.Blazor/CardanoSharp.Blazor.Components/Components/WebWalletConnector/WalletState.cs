@@ -1,8 +1,10 @@
 ﻿using CardanoSharp.Blazor.Components.Interfaces;
 using CardanoSharp.Blazor.Components.Models;
+using CardanoSharp.Blazor.Components.Utils;
 using CardanoSharp.Wallet.Enums;
 using CardanoSharp.Wallet.Extensions;
 using CardanoSharp.Wallet.Extensions.Models.Transactions;
+using CardanoSharp.Wallet.Models.Addresses;
 using CardanoSharp.Wallet.Models.Transactions;
 using System.Globalization;
 
@@ -28,64 +30,6 @@ namespace CardanoSharp.Blazor.Components
 			{
 				return !string.IsNullOrEmpty(ChangeAddress);
 			}
-		}
-
-		public WalletState(WalletExtension walletExtension, IWebWalletApi api) : base(walletExtension)
-		{
-			if (walletExtension == null) throw new ArgumentNullException(nameof(walletExtension));
-			if (api == null) throw new ArgumentNullException(nameof(api));
-			Api = api;
-		}
-
-		public async ValueTask InitAsync()
-		{
-			ChangeAddress = await Api.GetChangeAddress().ConfigureAwait(false);
-			var networkId = await Api.GetNetworkId();
-			switch(networkId)
-			{
-				case 0: Network = NetworkType.Testnet; break;
-				case 1: Network = NetworkType.Mainnet; break;
-				default: Network = NetworkType.Unknown; break;
-			}
-			await RefreshBalanceAsync();
-			return;
-		}
-
-		public async ValueTask RefreshBalanceAsync()
-		{
-			var balanceValue = new TransactionOutputValue();
-			var balanceCbor = await Api.GetBalance().ConfigureAwait(false);
-			if (!string.IsNullOrEmpty(balanceCbor) && balanceCbor != "00")
-			{
-				balanceValue = balanceCbor.HexToByteArray().DeserializeTransactionOutputValue();
-			}
-
-			TokenPreservation = 0;
-			if (balanceValue.MultiAsset != null && balanceValue.MultiAsset.Count > 0)
-			{
-				TokenPreservation = balanceValue.MultiAsset.CalculateMinUtxoLovelace();
-			}
-
-			Balance = balanceValue.Coin;
-
-			Assets.Clear();
-			if (balanceValue.MultiAsset != null && balanceValue.MultiAsset.Count > 0)
-			{
-				Assets.AddRange(
-					balanceValue.MultiAsset.SelectMany(p => p.Value.Token.Select(a => new Asset()
-					{
-						PolicyId = p.Key.ToStringHex(),
-						Name = a.Key.ToString(),
-						Quantity = a.Value
-					})).ToList()
-					);
-			}
-		}
-
-		public async ValueTask<bool> ConnectedWalletChanged()
-		{
-			var apiChangeAddress = await Api.GetChangeAddress().ConfigureAwait(false);
-			return !String.Equals(apiChangeAddress, ChangeAddress, StringComparison.OrdinalIgnoreCase);
 		}
 
 		public string BalanceAdaPortion
@@ -137,5 +81,66 @@ namespace CardanoSharp.Blazor.Components
 				return "";
 			}
 		}
+
+		public WalletState(WalletExtension walletExtension, IWebWalletApi api) : base(walletExtension)
+		{
+			if (walletExtension == null) throw new ArgumentNullException(nameof(walletExtension));
+			if (api == null) throw new ArgumentNullException(nameof(api));
+			Api = api;
+		}
+
+		public async ValueTask RefreshWalletAsync()
+		{
+			var networkId = await Api.GetNetworkId();
+			Network = GetNetworkFromId(networkId);
+			var changeAddressHex = await Api.GetChangeAddress().ConfigureAwait(false);
+			ChangeAddress = GetAddressBech(Network, changeAddressHex);
+			var balanceValue = new TransactionOutputValue();
+			var balanceCbor = await Api.GetBalance().ConfigureAwait(false);
+			if (!string.IsNullOrEmpty(balanceCbor) && balanceCbor != "00")
+			{
+				balanceValue = balanceCbor.HexToByteArray().DeserializeTransactionOutputValue();
+			}
+
+			TokenPreservation = 0;
+			if (balanceValue.MultiAsset != null && balanceValue.MultiAsset.Count > 0)
+			{
+				TokenPreservation = balanceValue.MultiAsset.CalculateMinUtxoLovelace();
+			}
+
+			Balance = balanceValue.Coin;
+
+			Assets.Clear();
+			if (balanceValue.MultiAsset != null && balanceValue.MultiAsset.Count > 0)
+			{
+				Assets.AddRange(
+					balanceValue.MultiAsset.SelectMany(p => p.Value.Token.Select(a => new Asset()
+					{
+						PolicyId = p.Key.ToStringHex(),
+						Name = a.Key.ToString(),
+						Quantity = a.Value
+					})).ToList()
+					);
+			}
+		}
+
+		private string GetAddressBech(NetworkType network, string addressHex)
+		{
+			return new Address(
+				ComponentUtils.GetPrefix(AddressType.Base, Network),
+				addressHex.HexToByteArray()
+			).ToString();
+		}
+
+		private NetworkType GetNetworkFromId(int networkId)
+		{
+			switch (networkId)
+			{
+				case 0: return NetworkType.Testnet;
+				case 1: return NetworkType.Mainnet;
+				default: return NetworkType.Unknown;
+			}
+		}
+
 	}
 }
