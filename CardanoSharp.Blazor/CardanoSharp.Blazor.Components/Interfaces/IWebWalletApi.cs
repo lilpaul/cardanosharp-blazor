@@ -16,7 +16,7 @@ namespace CardanoSharp.Blazor.Components.Interfaces
 		/// can possibly be returned by wallets. Those other network ID values are not governed by this document.
 		/// This result will stay the same unless the connected account has changed.
 		/// </returns>
-		ValueTask<int> GetNetworkId();
+		Task<int> GetNetworkId();
 
 		/// <summary>
 		/// api.getUtxos(amount: cbor\ = undefined, paginate: Paginate = undefined): Promise\
@@ -30,7 +30,7 @@ namespace CardanoSharp.Blazor.Components.Interfaces
 		/// to reach the combined ADA/multiasset value target specified in amount, and if this cannot be attained,
 		/// null shall be returned.The results can be further paginated by paginate if it is not undefined.
 		/// </returns>
-		ValueTask<string[]> GetUtxos(string? amount = null, Paginate? paginate = null);
+		Task<string[]> GetUtxos(string? amount = null, Paginate? paginate = null);
 
 		/// <summary>
 		/// api.getCollateral(params: { amount: cbor\ }): Promise\
@@ -61,7 +61,7 @@ namespace CardanoSharp.Blazor.Components.Interfaces
 		/// must never return any result where utxos would sum up to a smaller total ADA value, instead in a case like that 
 		/// an error message must be returned.... more at https://cips.cardano.org/cips/cip30/
 		/// </returns>
-		ValueTask<string[]> GetCollateral(CollateralParams collateralParams);
+		Task<string[]> GetCollateral(CollateralParams collateralParams);
 
 		/// <summary>
 		/// api.getBalance(): Promise\>
@@ -72,7 +72,7 @@ namespace CardanoSharp.Blazor.Components.Interfaces
 		/// but it is both useful to dApps and likely already maintained by the implementing wallet in a more efficient
 		/// manner so it has been included in the API as well.
 		/// </returns>
-		ValueTask<string> GetBalance();
+		Task<string> GetBalance();
 
 		/// <summary>
 		/// api.getUsedAddresses(paginate: Paginate = undefined): Promise\
@@ -83,14 +83,14 @@ namespace CardanoSharp.Blazor.Components.Interfaces
 		/// <returns>
 		/// Returns a list of all used (included in some on-chain transaction) addresses controlled by the wallet.
 		/// </returns>
-		ValueTask<string[]> GetUsedAddresses(Paginate? paginate = null);
+		Task<string[]> GetUsedAddresses(Paginate? paginate = null);
 
 		/// <summary>
 		/// api.getUnusedAddresses(): Promise\
 		/// Errors: APIError
 		/// </summary>
 		/// <returns>Returns a list of unused addresses controlled by the wallet.</returns>
-		ValueTask<string[]> GetUnusedAddresses();
+		Task<string[]> GetUnusedAddresses();
 
 		/// <summary>
 		/// api.getChangeAddress(): Promise\
@@ -99,7 +99,7 @@ namespace CardanoSharp.Blazor.Components.Interfaces
 		/// during transaction creation back to the connected wallet. This can be used as a generic receive address as well.
 		/// </summary>
 		/// <returns></returns>
-		ValueTask<string> GetChangeAddress();
+		Task<string> GetChangeAddress();
 
 		/// <summary>
 		/// api.getRewardAddresses(): Promise\
@@ -107,7 +107,7 @@ namespace CardanoSharp.Blazor.Components.Interfaces
 		/// Returns the reward addresses owned by the wallet. This can return multiple addresses e.g. CIP-0018.
 		/// </summary>
 		/// <returns></returns>
-		ValueTask<string[]> GetRewardAddresses();
+		Task<string[]> GetRewardAddresses();
 
 		/// <summary>
 		/// api.signTx(tx: cbor\, partialSign: bool = false): Promise\>
@@ -123,7 +123,7 @@ namespace CardanoSharp.Blazor.Components.Interfaces
 		/// <param name="tx">A hex-encoded string representing CBOR</param>
 		/// <param name="partialSign"></param>
 		/// <returns></returns>
-		ValueTask<string> SignTx(string tx, bool partialSign = false);
+		Task<string> SignTx(string tx, bool partialSign = false);
 
 		/// <summary>
 		/// api.signData(addr: Address, payload: Bytes): Promise\
@@ -137,7 +137,7 @@ namespace CardanoSharp.Blazor.Components.Interfaces
 		/// <param name="addr">A string represnting an address in either bech32 format, or hex-encoded bytes.</param>
 		/// <param name="payload">A hex-encoded string of the corresponding bytes.</param>
 		/// <returns></returns>
-		ValueTask<DataSignature> SignData(string addr, string payload);
+		Task<DataSignature> SignData(string addr, string payload);
 
 		/// <summary>
 		/// api.submitTx(tx: cbor\): Promise\
@@ -149,6 +149,6 @@ namespace CardanoSharp.Blazor.Components.Interfaces
 		/// </summary>
 		/// <param name="tx">A hex-encoded string representing CBOR</param>
 		/// <returns></returns>
-		ValueTask<string> SubmitTx(string tx);
+		Task<string> SubmitTx(string tx);
 	}
 }

@@ -19,27 +19,27 @@ namespace CardanoSharp.Blazor.Components.JSInterop
             _walletKey = walletKey;
         }
 
-        public async ValueTask<IJSObjectReference> Enable()
+        public async Task<IJSObjectReference> Enable()
         {
             return await _js.InvokeAsync<IJSObjectReference>($"cardano.{_walletKey}.enable");
         }
 
-        public async ValueTask<bool> IsEnabled()
+        public async Task<bool> IsEnabled()
         {
             return await _js.InvokeAsync<bool>($"cardano.{_walletKey}.isEnabled");
         }
 
-        public async ValueTask<string> ApiVersion()
+        public async Task<string> ApiVersion()
         {
             return await _js.InvokeAsync<string>($"cardano.{_walletKey}.apiVersion");
         }
 
-        public async ValueTask<string> Name()
+        public async Task<string> Name()
         {
             return await _js.InvokeAsync<string>($"cardano.{_walletKey}.name");
         }
 
-        public async ValueTask<string> Icon()
+        public async Task<string> Icon()
         {
             return await _js.InvokeAsync<string>($"cardano.{_walletKey}.icon");
         }

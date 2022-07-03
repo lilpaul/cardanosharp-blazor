@@ -26,7 +26,7 @@ namespace CardanoSharp.Blazor.Components.Interfaces
 		/// not request access a second time, and instead just return the API object.
 		/// </summary>
 		/// <returns></returns>
-		ValueTask<IJSObjectReference> Enable();
+		Task<IJSObjectReference> Enable();
 
 		/// <summary>
 		/// cardano.{walletName}.isEnabled(): Promise\
@@ -37,7 +37,7 @@ namespace CardanoSharp.Blazor.Components.Interfaces
 		/// object.
 		/// </summary>
 		/// <returns></returns>
-		ValueTask<bool> IsEnabled();
+		Task<bool> IsEnabled();
 
 		/// <summary>
 		/// cardano.{walletName}.apiVersion: String
@@ -45,7 +45,7 @@ namespace CardanoSharp.Blazor.Components.Interfaces
 		/// method instead attribute and return type is ValueTask<string> instead of string as we still have to invoke
 		/// js interop which is async
 		/// </summary>
-		ValueTask<string> ApiVersion();
+		Task<string> ApiVersion();
 
 		/// <summary>
 		/// cardano.{walletName}.name: String
@@ -54,7 +54,7 @@ namespace CardanoSharp.Blazor.Components.Interfaces
 		/// method instead attribute and return type is ValueTask<string> instead of string as we still have to invoke
 		/// js interop which is async
 		/// </summary>
-		ValueTask<string> Name();
+		Task<string> Name();
 
 		/// <summary>
 		/// cardano.{walletName}.icon: String
@@ -63,6 +63,6 @@ namespace CardanoSharp.Blazor.Components.Interfaces
 		/// method instead attribute and return type is ValueTask<string> instead of string as we still have to invoke
 		/// js interop which is async
 		/// </summary>
-		ValueTask<string> Icon();
+		Task<string> Icon();
 	}
 }
