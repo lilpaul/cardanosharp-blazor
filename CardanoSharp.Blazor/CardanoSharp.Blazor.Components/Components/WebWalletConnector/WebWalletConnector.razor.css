@@ -2,7 +2,7 @@
 	display: inline-flex;
 }
 
-.wwc-connector-connect-button {
+.wwc-connect-button {
 	color: black;
 	display: inline-flex;
 	border: 1px solid grey;
@@ -13,6 +13,11 @@
 	align-items: center;
 	min-width: 10em;
 	min-height: 4em;
+}
+
+.wwc-connect-button-icon {
+	max-width: 30px;
+	max-height: 30px;
 }
 
 .wwc-modal {
@@ -73,6 +78,73 @@
 
 .wwc-wallet-balance-header-text {
 	font-size: 1.5em;
+}
+
+.wwc-wallet-network-container {
+	display: inline-flex;
+	width: auto;
+	justify-content: center;
+	align-items: center
+}
+
+.wwc-wallet-network-text {
+	font-size: 0.6em;
+}
+
+.wwc-wallet-balance-available {
+	display: inline-flex;
+	width: auto;
+	justify-content: space-between;
+	align-items: center
+}
+
+.wwc-wallet-balance-unavailable {
+	display: inline-flex;
+	width: auto;
+	justify-content: space-between;
+	align-items: center;
+	font-size: 0.8em;
+}
+
+.wwc-wallet-balance-amount {
+	margin-left: 1em;
+}
+
+.wwc-wallet-balance-amount-ada {
+	font-size: 1.2em;
+}
+
+.wwc-wallet-balance-amount-decimal {
+	margin-left: -3px;
+	margin-right: -3px;
+}
+
+.wwc-wallet-balance-amount-lovelace {
+	font-size: 0.8em;
+}
+
+.wwc-wallet-balance-amount-currency {
+	font-size: 1.2em;
+}
+
+.wwc-wallet-balance-tokens {
+	display: inline-flex;
+	width: auto;
+	justify-content: center;
+	align-items: center;
+}
+
+.wwc-wallet-button {
+	color: black;
+	display: inline-flex;
+	border: 1px solid grey;
+	border-radius: 0.5em;
+	padding: 0.5em;
+	margin: 0.5em 0;
+	cursor: pointer;
+	min-width: 6em;
+	justify-content: center;
+	text-decoration: none;
 }
 
 .wwc-choose-header {

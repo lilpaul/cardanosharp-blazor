@@ -13,7 +13,7 @@
 @inject IJSRuntime JS
 
 <div class="wwc-container">
-    <div class="wwc-connector-connect-button" @onclick="@(async () => await ShowConnectWalletDialogAsync())">
+    <div class="wwc-connect-button" @onclick="@(async () => await ShowConnectWalletDialogAsync())">
         @if (!Connected)
         {
             <span>Connect Wallet</span>
@@ -21,7 +21,7 @@
         else
         {
             <span>Connected</span>
-            <img class="wallet-icon" src="@_connectedWallet!.Icon" title="@_connectedWallet.Name" />
+            <img class="wwc-connect-button-icon" src="@_connectedWallet!.Icon" title="@_connectedWallet.Name" />
         }
     </div>
 
@@ -40,7 +40,31 @@
                                     <div class="wwc-wallet-balance-header-container">
                                         <span class="wwc-wallet-balance-header-text">Balance</span>
                                     </div>
-
+                                    <div class="wwc-wallet-network-container">
+                                        <span class="wwc-wallet-network-text">@_connectedWallet.Network</span>
+                                    </div>
+                                    <div class="wwc-wallet-balance-available">
+                                        <span>Available</span>
+                                        <div class="wwc-wallet-balance-amount">
+                                            <span class="wwc-wallet-balance-amount-ada">@_connectedWallet.BalanceAdaPortion</span>
+                                            <span class="wwc-wallet-balance-amount-decimal">.</span>
+                                            <span class="wwc-wallet-balance-amount-lovelace">@_connectedWallet.BalanceLovelacePortion</span>
+                                            <span class="wwc-wallet-balance-amount-currency">@_connectedWallet.Currency</span>
+                                        </div>
+                                    </div>
+                                    <div class="wwc-wallet-balance-unavailable">
+                                        <span>Reserved</span>
+                                        <div class="wwc-wallet-balance-amount">
+                                            <span class="wwc-wallet-balance-amount-ada">@_connectedWallet.TokenPreservationAdaPortion</span>
+                                            <span class="wwc-wallet-balance-amount-decimal">.</span>
+                                            <span class="wwc-wallet-balance-amount-lovelace">@_connectedWallet.TokenPreservationLovelacePortion</span>
+                                            <span class="wwc-wallet-balance-amount-currency">@_connectedWallet.Currency</span>
+                                        </div>
+                                    </div>
+                                    <div class="wwc-wallet-balance-tokens">
+                                        <span>Collectibles @_connectedWallet.Assets.Count</span>
+                                    </div>
+                                    <div class="wwc-wallet-button" @onclick="@(() => DisconnectPluginClick())">Disconnect</div>
                                 </div>
                             </div>
                         }
@@ -192,5 +216,10 @@
         {
             _connectedWallet = null;
         }
+    }
+
+    private void DisconnectPluginClick()
+    {
+        _connectedWallet = null;
     }
 }

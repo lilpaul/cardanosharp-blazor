@@ -12,7 +12,7 @@ namespace CardanoSharp.Blazor.Components
 	{
 		public IWebWalletApi Api { get; }
 
-		public NetworkType Network { get; }
+		public NetworkType Network { get; private set; }
 
 		public string ChangeAddress { get; private set; } = "";
 
@@ -40,29 +40,45 @@ namespace CardanoSharp.Blazor.Components
 		public async ValueTask InitAsync()
 		{
 			ChangeAddress = await Api.GetChangeAddress().ConfigureAwait(false);
+			var networkId = await Api.GetNetworkId();
+			switch(networkId)
+			{
+				case 0: Network = NetworkType.Testnet; break;
+				case 1: Network = NetworkType.Mainnet; break;
+				default: Network = NetworkType.Unknown; break;
+			}
 			await RefreshBalanceAsync();
 			return;
 		}
 
 		public async ValueTask RefreshBalanceAsync()
 		{
-			var balanceValue = new TransactionOutputValue() { MultiAsset = new Dictionary<byte[], NativeAsset>() };
+			var balanceValue = new TransactionOutputValue();
 			var balanceCbor = await Api.GetBalance().ConfigureAwait(false);
-			if (string.IsNullOrEmpty(balanceCbor) && balanceCbor != "00")
+			if (!string.IsNullOrEmpty(balanceCbor) && balanceCbor != "00")
 			{
 				balanceValue = balanceCbor.HexToByteArray().DeserializeTransactionOutputValue();
 			}
-			TokenPreservation = balanceValue.MultiAsset.CalculateMinUtxoLovelace();
+
+			TokenPreservation = 0;
+			if (balanceValue.MultiAsset != null && balanceValue.MultiAsset.Count > 0)
+			{
+				TokenPreservation = balanceValue.MultiAsset.CalculateMinUtxoLovelace();
+			}
+
 			Balance = balanceValue.Coin;
+
 			Assets.Clear();
 			if (balanceValue.MultiAsset != null && balanceValue.MultiAsset.Count > 0)
 			{
-				balanceValue.MultiAsset.SelectMany(p => p.Value.Token.Select(a => new Asset()
-				{
-					PolicyId = p.Key.ToStringHex(),
-					Name = a.Key.ToString(),
-					Quantity = a.Value
-				})).ToList();
+				Assets.AddRange(
+					balanceValue.MultiAsset.SelectMany(p => p.Value.Token.Select(a => new Asset()
+					{
+						PolicyId = p.Key.ToStringHex(),
+						Name = a.Key.ToString(),
+						Quantity = a.Value
+					})).ToList()
+					);
 			}
 		}
 
