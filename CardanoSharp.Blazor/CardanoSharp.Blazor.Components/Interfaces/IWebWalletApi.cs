@@ -10,24 +10,26 @@ namespace CardanoSharp.Blazor.Components.Interfaces
 		/// <summary>
 		/// api.getNetworkId(): Promise\
 		/// Errors: APIError
+		/// </summary>
+		/// <returns>
 		/// Returns the network id of the currently connected account. 0 is testnet and 1 is mainnet but other networks
 		/// can possibly be returned by wallets. Those other network ID values are not governed by this document.
 		/// This result will stay the same unless the connected account has changed.
-		/// </summary>
-		/// <returns></returns>
+		/// </returns>
 		ValueTask<int> GetNetworkId();
 
 		/// <summary>
 		/// api.getUtxos(amount: cbor\ = undefined, paginate: Paginate = undefined): Promise\
 		/// Errors: APIError, PaginateError
+		/// </summary>
+		/// <param name="amount">A hex-encoded string representing CBOR</param>
+		/// <param name="paginate"></param>
+		/// <returns>
 		/// If amount is undefined, this shall return a list of all UTXOs(unspent transaction outputs) controlled
 		/// by the wallet.If amount is not undefined, this request shall be limited to just the UTXOs that are required
 		/// to reach the combined ADA/multiasset value target specified in amount, and if this cannot be attained,
 		/// null shall be returned.The results can be further paginated by paginate if it is not undefined.
-		/// </summary>
-		/// <param name="amount">A hex-encoded string representing CBOR</param>
-		/// <param name="paginate"></param>
-		/// <returns></returns>
+		/// </returns>
 		ValueTask<string[]> GetUtxos(string? amount = null, Paginate? paginate = null);
 
 		/// <summary>
@@ -50,28 +52,45 @@ namespace CardanoSharp.Blazor.Components.Interfaces
 		/// parameter is named collateralParams instead of 'params' as per spec due to params being reserved word
 		/// </summary>
 		/// <param name="collateralParams"></param>
-		/// <returns></returns>
+		/// <returns>
+		/// This shall return a list of one or more UTXOs (unspent transaction outputs) controlled by the wallet that 
+		/// are required to reach AT LEAST the combined ADA value target specified in amount AND the best suitable to 
+		/// be used as collateral inputs for transactions with plutus script inputs (pure ADA-only utxos). If this cannot 
+		/// be attained, an error message with an explanation of the blocking problem shall be returned. NOTE: wallets are 
+		/// free to return utxos that add up to a greater total ADA value than requested in the amount parameter, but wallets 
+		/// must never return any result where utxos would sum up to a smaller total ADA value, instead in a case like that 
+		/// an error message must be returned.... more at https://cips.cardano.org/cips/cip30/
+		/// </returns>
 		ValueTask<string[]> GetCollateral(CollateralParams collateralParams);
 
 		/// <summary>
 		/// api.getBalance(): Promise\>
 		/// Errors: APIError
+		/// </summary>
+		/// <returns>
 		/// Returns the total balance available of the wallet. This is the same as summing the results of api.getUtxos(),
 		/// but it is both useful to dApps and likely already maintained by the implementing wallet in a more efficient
 		/// manner so it has been included in the API as well.
-		/// </summary>
-		/// <returns></returns>
+		/// </returns>
 		ValueTask<string> GetBalance();
 
 		/// <summary>
 		/// api.getUsedAddresses(paginate: Paginate = undefined): Promise\
 		/// Errors: APIError
-		/// Returns a list of all used (included in some on-chain transaction) addresses controlled by the wallet.
 		/// The results can be further paginated by paginate if it is not undefined.
 		/// </summary>
 		/// <param name="paginate"></param>
-		/// <returns></returns>
+		/// <returns>
+		/// Returns a list of all used (included in some on-chain transaction) addresses controlled by the wallet.
+		/// </returns>
 		ValueTask<string[]> GetUsedAddresses(Paginate? paginate = null);
+
+		/// <summary>
+		/// api.getUnusedAddresses(): Promise\
+		/// Errors: APIError
+		/// </summary>
+		/// <returns>Returns a list of unused addresses controlled by the wallet.</returns>
+		ValueTask<string[]> GetUnusedAddresses();
 
 		/// <summary>
 		/// api.getChangeAddress(): Promise\

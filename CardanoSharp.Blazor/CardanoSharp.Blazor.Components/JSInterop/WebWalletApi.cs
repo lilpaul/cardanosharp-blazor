@@ -41,6 +41,11 @@ namespace CardanoSharp.Blazor.Components.JSInterop
 			return await _jsWalletObj.InvokeAsync<string[]>($"getUsedAddresses", paginate);
 		}
 
+		public async ValueTask<string[]> GetUnusedAddresses()
+        {
+			return await _jsWalletObj.InvokeAsync<string[]>($"getUnusedAddresses");
+		}
+
 		public async ValueTask<string> GetChangeAddress()
 		{
 			return await _jsWalletObj.InvokeAsync<string>($"getChangeAddress");
