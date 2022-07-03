@@ -13,7 +13,46 @@
 @inject IJSRuntime JS
 
 <div class="wwc-container">
-    <button @onclick="@(async () => await ConnectClick())">Connect</button>
+    <div class="wwc-connector-connect-button" @onclick="ShowConnectWalletDialog">
+        @if (!Connected)
+        {
+            <span>Connect Wallet</span>
+        }
+        else
+        {
+            <span>Connected</span>
+            <img class="wallet-icon" src="@_connectedWallet!.Icon" title="@_connectedWallet.Name" />
+        }
+    </div>
+
+    @if (_showPopup)
+    {
+        <div class="wwc-modal" onclick="@(() => ModalClick())">
+            <div class="wwc-modal-container" @onclick:stopPropagation="true">
+                    @if (Initialized)
+                    {
+                        @if (Connected)
+                        {
+                            <div>SHOW CONNECTED WALLET</div>
+                        }
+                        else
+                        {
+                            <div class="wwc-choose-header">
+                                @Header
+                            </div>
+                            <div class="wwc-choose-list">
+                                @foreach (var plugin in _plugins!)
+                                {
+                                    <div class="wwc-plugin-container">
+                                        @plugin.Name
+                                    </div>
+                                }
+                            </div>
+                        }
+                    }
+            </div>
+        </div>
+    }
 </div>
 
 @code {
@@ -26,7 +65,7 @@
     [Parameter]
     public bool AutoCloseOnDisconnect { get; set; }
     [Parameter]
-    public bool HideOnModalClick { get; set; } = true;
+    public bool RefreshBalanceOnShowPopup { get; set; } = true;
     [Parameter]
     public List<WalletExtension> SupportedExtensions { get; set; } = new List<WalletExtension>()
     {
@@ -54,13 +93,31 @@
     [Parameter]
     public EventCallback OnDisconnect { get; set; }
 
+    public bool Connected
+    {
+        get
+        {
+            return _connectedWallet != null;
+        }
+    }
+
+    public bool Initialized
+    {
+        get
+        {
+            return _webWalletConnectorJs != null && _plugins != null;
+        }
+    }
+
     private DotNetObjectReference<WebWalletConnector>? _selfReference;
     private WebWalletConnectorJsInterop? _webWalletConnectorJs;
     private List<PluginState>? _plugins;
     private WalletState? _connectedWallet;
+    private bool _showPopup;
 
     protected override async Task OnInitializedAsync()
     {
+        Debug("OnInitializedAsync");
         if (_webWalletConnectorJs == null)
         {
             _webWalletConnectorJs = new WebWalletConnectorJsInterop(JS);
@@ -78,30 +135,43 @@
         }
     }
 
+    [JSInvokable]
     public void ShowConnectWalletDialog()
     {
-        
+        Debug("ShowConnectWalletDialog");
+        if (Connected && RefreshBalanceOnShowPopup)
+        {
+            RefreshConnectedWallet();
+        }
+        _showPopup = true;
+        StateHasChanged();
     }
 
-
+    [JSInvokable]
     public void HideConnectWalletDialog()
     {
-        
+        Debug("HideConnectWalletDialog");
+        _showPopup = false;
+        StateHasChanged();
     }
 
-    private async ValueTask ConnectClick()
+    public void RefreshConnectedWallet()
     {
-        try
-        {
-            //var walletApi = await _initialApi!.Enable();
-            //_connectedWalletApi = new WebWalletApi(walletApi);
-            //var changeAddress = await _connectedWalletApi.GetChangeAddress();
-            //Console.WriteLine($"CHANGE ADDR: {changeAddress}");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.ToString());
-        }
+        Debug("RefreshConnectedWallet");
+        _connectedWallet!.RefreshBalanceAsync();
+    }
+
+
+    private void ConnectorConnectClick()
+    {
+        Debug("ConnectorConnectClick");
+        ShowConnectWalletDialog();
+    }
+
+    protected void ModalClick()
+    {
+        Debug("ModalClick");
+        HideConnectWalletDialog();
     }
 
     private void Debug(string text)
