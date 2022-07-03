@@ -35,13 +35,52 @@
 @if (Test == "Get UTxOs")
 {
     <div>
-        Amount: <input type="text" @bind="GetUtxoAmountCbor" />
+        Amount (CBOR): <input type="text" @bind="GetUtxoAmountCbor" />
     </div>
     <div>
         Paginate - Page (-1 = dont use): <input type="number" @bind="GetUtxoPage" />
     </div>
     <div>
         Paginate - Limit (-1 = dont use): <input type="number" @bind="GetUtxoLimit" />
+    </div>
+}
+@if (Test == "Get Collateral")
+{
+    <div>
+        Amount (CBOR): <input type="text" @bind="GetCollateralAmount" />
+    </div>
+}
+@if (Test == "Get Used Addresses")
+{
+    <div>
+        Paginate - Page (-1 = dont use): <input type="number" @bind="GetUsedAddressesPage" />
+    </div>
+    <div>
+        Paginate - Limit (-1 = dont use): <input type="number" @bind="GetUsedAddressesLimit" />
+    </div>
+}
+@if (Test == "Sign Tx")
+{
+    <div>
+        Transaction (CBOR): <input type="text" @bind="SignTxTransactionCbor" />
+    </div>
+    <div>
+        Partial Sign: <input type="checkbox" @bind="SignTxPartialSign" />
+    </div>
+}
+@if (Test == "Sign Data")
+{
+    <div>
+        Addr (bech or hex): <input type="text" @bind="SignDataAddr" />
+    </div>
+    <div>
+        Payload (hex): <input type="text" @bind="SignDataPayload" />
+    </div>
+}
+@if (Test == "Submit Tx")
+{
+    <div>
+        Transaction (CBOR): <input type="text" @bind="SubmitTxTransactionCbor" />
     </div>
 }
 <br/>
@@ -65,6 +104,14 @@
     private string GetUtxoAmountCbor = "";
     private int GetUtxoPage = -1;
     private int GetUtxoLimit = -1;
+    private string GetCollateralAmount = "";
+    private int GetUsedAddressesPage = -1;
+    private int GetUsedAddressesLimit = -1;
+    private string SignTxTransactionCbor = "";
+    private bool SignTxPartialSign = true;
+    private string SignDataAddr = "";
+    private string SignDataPayload = "";
+    private string SubmitTxTransactionCbor = "";
 
     private async ValueTask RunTestAsync()
     {
@@ -77,12 +124,47 @@
             case "Get UTxOs" when string.IsNullOrEmpty(GetUtxoAmountCbor):
                 DisplayResult.AddRange(await _connector!.ConnectedWallet!.Api.GetUtxos());
                 break;
-            case "Get UTxOs" when GetUtxoPage < 0 || GetUtxoLimit < 0:
+            case "Get UTxOs" when (GetUtxoPage < 0 || GetUtxoLimit < 0):
                 DisplayResult.AddRange(await _connector!.ConnectedWallet!.Api.GetUtxos(GetUtxoAmountCbor));
                 break;
             case "Get UTxOs":
                 DisplayResult.AddRange(await _connector!.ConnectedWallet!.Api.GetUtxos(GetUtxoAmountCbor,
-                new Paginate() { Page = GetUtxoPage, Limit = GetUtxoLimit }));
+                    new Paginate() { Page = GetUtxoPage, Limit = GetUtxoLimit }));
+                break;
+            case "Get Collateral":
+                DisplayResult.AddRange(await _connector!.ConnectedWallet!.Api.GetCollateral(new CollateralParams() {
+                        Amount = GetCollateralAmount
+                    }));
+                break;
+            case "Get Balance":
+                DisplayResult.Add(await _connector!.ConnectedWallet!.Api.GetBalance());
+                break;
+            case "Get Used Addresses" when (GetUsedAddressesPage > 0 && GetUsedAddressesLimit > 0):
+                DisplayResult.AddRange(await _connector!.ConnectedWallet!.Api.GetUsedAddresses(
+                    new Paginate() { Page = GetUsedAddressesPage, Limit = GetUsedAddressesLimit }));
+                break;
+            case "Get Used Addresses":
+                DisplayResult.AddRange(await _connector!.ConnectedWallet!.Api.GetUsedAddresses());
+                break;
+            case "Get Unused Addresses":
+                DisplayResult.AddRange(await _connector!.ConnectedWallet!.Api.GetUnusedAddresses());
+                break;
+            case "Get Change Address":
+                DisplayResult.Add(await _connector!.ConnectedWallet!.Api.GetChangeAddress());
+                break;
+            case "Get Reward Addresses":
+                DisplayResult.AddRange(await _connector!.ConnectedWallet!.Api.GetRewardAddresses());
+                break;
+            case "Sign Tx":
+                DisplayResult.Add(await _connector!.ConnectedWallet!.Api.SignTx(SignTxTransactionCbor, SignTxPartialSign));
+                break;
+            case "Sign Data":
+                var dataSig = await _connector!.ConnectedWallet!.Api.SignData(SignDataAddr, SignDataPayload);
+                DisplayResult.Add(dataSig.Signature);
+                DisplayResult.Add(dataSig.Key);
+                break;
+            case "Submit Tx":
+                DisplayResult.Add(await _connector!.ConnectedWallet!.Api.SubmitTx(SubmitTxTransactionCbor));
                 break;
         }
     }
