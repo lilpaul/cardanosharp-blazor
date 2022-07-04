@@ -92,7 +92,7 @@ namespace CardanoSharp.Blazor.Components
 		public async ValueTask RefreshWalletAsync()
 		{
 			var networkId = await Api.GetNetworkId();
-			Network = GetNetworkFromId(networkId);
+			Network = ComponentUtils.GetNetworkType(networkId);
 			var changeAddressHex = await Api.GetChangeAddress().ConfigureAwait(false);
 			ChangeAddress = GetAddressBech(Network, changeAddressHex);
 			var balanceValue = new TransactionOutputValue();

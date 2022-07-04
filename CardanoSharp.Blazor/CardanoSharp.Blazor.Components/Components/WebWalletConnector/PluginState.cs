@@ -25,7 +25,7 @@ namespace CardanoSharp.Blazor.Components
 			if (!Installed) return null;
 			try
 			{
-				var apiJsObj = await InitialApi.Enable().ConfigureAwait(false);
+				var apiJsObj = (IJSObjectReference)await InitialApi.Enable().ConfigureAwait(false);
 				if (apiJsObj == null) return null;
 				var api = new WebWalletApi(apiJsObj);
 				var wallet = new WalletState(this, api);

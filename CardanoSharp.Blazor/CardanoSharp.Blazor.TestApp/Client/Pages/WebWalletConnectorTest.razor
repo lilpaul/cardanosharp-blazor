@@ -115,57 +115,71 @@
 
     private async ValueTask RunTestAsync()
     {
-        DisplayResult.Clear();
-        switch(Test)
+        try
         {
-            case "Get Network":
-                DisplayResult.Add((await _connector!.ConnectedWallet!.Api.GetNetworkId()).ToString());
-                break;
-            case "Get UTxOs" when string.IsNullOrEmpty(GetUtxoAmountCbor):
-                DisplayResult.AddRange(await _connector!.ConnectedWallet!.Api.GetUtxos());
-                break;
-            case "Get UTxOs" when (GetUtxoPage < 0 || GetUtxoLimit < 0):
-                DisplayResult.AddRange(await _connector!.ConnectedWallet!.Api.GetUtxos(GetUtxoAmountCbor));
-                break;
-            case "Get UTxOs":
-                DisplayResult.AddRange(await _connector!.ConnectedWallet!.Api.GetUtxos(GetUtxoAmountCbor,
-                    new Paginate() { Page = GetUtxoPage, Limit = GetUtxoLimit }));
-                break;
-            case "Get Collateral":
-                DisplayResult.AddRange(await _connector!.ConnectedWallet!.Api.GetCollateral(new CollateralParams() {
-                        Amount = GetCollateralAmount
-                    }));
-                break;
-            case "Get Balance":
-                DisplayResult.Add(await _connector!.ConnectedWallet!.Api.GetBalance());
-                break;
-            case "Get Used Addresses" when (GetUsedAddressesPage > 0 && GetUsedAddressesLimit > 0):
-                DisplayResult.AddRange(await _connector!.ConnectedWallet!.Api.GetUsedAddresses(
-                    new Paginate() { Page = GetUsedAddressesPage, Limit = GetUsedAddressesLimit }));
-                break;
-            case "Get Used Addresses":
-                DisplayResult.AddRange(await _connector!.ConnectedWallet!.Api.GetUsedAddresses());
-                break;
-            case "Get Unused Addresses":
-                DisplayResult.AddRange(await _connector!.ConnectedWallet!.Api.GetUnusedAddresses());
-                break;
-            case "Get Change Address":
-                DisplayResult.Add(await _connector!.ConnectedWallet!.Api.GetChangeAddress());
-                break;
-            case "Get Reward Addresses":
-                DisplayResult.AddRange(await _connector!.ConnectedWallet!.Api.GetRewardAddresses());
-                break;
-            case "Sign Tx":
-                DisplayResult.Add(await _connector!.ConnectedWallet!.Api.SignTx(SignTxTransactionCbor, SignTxPartialSign));
-                break;
-            case "Sign Data":
-                var dataSig = await _connector!.ConnectedWallet!.Api.SignData(SignDataAddr, SignDataPayload);
-                DisplayResult.Add(dataSig.Signature);
-                DisplayResult.Add(dataSig.Key);
-                break;
-            case "Submit Tx":
-                DisplayResult.Add(await _connector!.ConnectedWallet!.Api.SubmitTx(SubmitTxTransactionCbor));
-                break;
+            DisplayResult.Clear();
+            switch (Test)
+            {
+                case "Get Network":
+                    DisplayResult.Add((await _connector!.ConnectedWallet!.Api.GetNetworkId()).ToString());
+                    break;
+                case "Get UTxOs" when string.IsNullOrEmpty(GetUtxoAmountCbor):
+                    DisplayResult.AddRange(await _connector!.ConnectedWallet!.Api.GetUtxos());
+                    break;
+                case "Get UTxOs" when (GetUtxoPage < 0 || GetUtxoLimit < 0):
+                    DisplayResult.AddRange(await _connector!.ConnectedWallet!.Api.GetUtxos(GetUtxoAmountCbor));
+                    break;
+                case "Get UTxOs":
+                    DisplayResult.AddRange(await _connector!.ConnectedWallet!.Api.GetUtxos(GetUtxoAmountCbor,
+                        new Paginate() { Page = GetUtxoPage, Limit = GetUtxoLimit }));
+                    break;
+                case "Get Collateral":
+                    DisplayResult.AddRange(await _connector!.ConnectedWallet!.Api.GetCollateral(new CollateralParams()
+                        {
+                            Amount = GetCollateralAmount
+                        }));
+                    break;
+                case "Get Balance":
+                    DisplayResult.Add(await _connector!.ConnectedWallet!.Api.GetBalance());
+                    break;
+                case "Get Used Addresses" when (GetUsedAddressesPage > 0 && GetUsedAddressesLimit > 0):
+                    DisplayResult.AddRange(await _connector!.ConnectedWallet!.Api.GetUsedAddresses(
+                        new Paginate() { Page = GetUsedAddressesPage, Limit = GetUsedAddressesLimit }));
+                    break;
+                case "Get Used Addresses":
+                    DisplayResult.AddRange(await _connector!.ConnectedWallet!.Api.GetUsedAddresses());
+                    break;
+                case "Get Unused Addresses":
+                    DisplayResult.AddRange(await _connector!.ConnectedWallet!.Api.GetUnusedAddresses());
+                    break;
+                case "Get Change Address":
+                    DisplayResult.Add(await _connector!.ConnectedWallet!.Api.GetChangeAddress());
+                    break;
+                case "Get Reward Addresses":
+                    DisplayResult.AddRange(await _connector!.ConnectedWallet!.Api.GetRewardAddresses());
+                    break;
+                case "Sign Tx":
+                    DisplayResult.Add(await _connector!.ConnectedWallet!.Api.SignTx(SignTxTransactionCbor, SignTxPartialSign));
+                    break;
+                case "Sign Data":
+                    var dataSig = await _connector!.ConnectedWallet!.Api.SignData(SignDataAddr, SignDataPayload);
+                    DisplayResult.Add(dataSig.Signature);
+                    DisplayResult.Add(dataSig.Key);
+                    break;
+                case "Submit Tx":
+                    DisplayResult.Add(await _connector!.ConnectedWallet!.Api.SubmitTx(SubmitTxTransactionCbor));
+                    break;
+            }
+        }
+        catch (JSException jex)
+        {
+            Console.WriteLine("JS EXCEPTION CAUGHT:");
+            Console.WriteLine(jex.ToString());
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("EXCEPTION CAUGHT:");
+            Console.WriteLine(ex.ToString());
         }
     }
 }
