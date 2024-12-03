@@ -27,9 +27,11 @@
     AutoCloseOnConnect="true"
     HideOnModalClick="ModalClickHideOptions.WhenConnected"
     PopupMode="ConnectedDisplayMode.ShowAll"
-    OnConnect="WalletConnected" 
+    OnConnect="WalletConnected"
+    OnConnectStart="WalletConnectStartAsync"
     OnDisconnect="WalletDisconnected"
-    OnInitComplete="WalletInitComplete">
+    OnInitComplete="WalletInitComplete"
+    SupportedExtensions="TestExtensions">
     <AdditionalWalletsContent>
         <div class="wallet-card">
             <span class="wallet-card-title">Extra Content</span>
@@ -153,6 +155,41 @@
     private int GetUtxosPaginateLimit = -1;
     private int RateLimitRequestCount = 200;
 
+    private List<WalletExtension> TestExtensions { get; set; } = new List<WalletExtension>()
+    {
+        new WalletExtension() {
+            Key = "eternl",
+            Name = "Eternl",
+            Icon = CardanoSharp.Blazor.Components.Utils.WalletIcons.EternlIcon,
+            Url = "https://eternl.io",
+        },
+        new WalletExtension() {
+            Key = "gerowallet",
+            Name = "Gero",
+            Icon = CardanoSharp.Blazor.Components.Utils.WalletIcons.GeroIcon,
+            Url = "https://gerowallet.io"
+        },
+        new WalletExtension() {
+            Key = "nami",
+            Name = "Nami",
+            Icon = CardanoSharp.Blazor.Components.Utils.WalletIcons.NamiIcon,
+            Url = "https://namiwallet.io"
+        },
+        new WalletExtension() {
+            Key = "typhoncip30",
+            Name = "Typhon",
+            Icon = CardanoSharp.Blazor.Components.Utils.WalletIcons.TyphonIcon,
+            Url = "https://typhonwallet.io"
+        },
+        new WalletExtension() {
+            Key = "flint",
+            Name = "Flint",
+            Icon = CardanoSharp.Blazor.Components.Utils.WalletIcons.FlintIcon,
+            Url = "https://flint-wallet.com",
+            AssumeInstalled = true
+        },
+    };
+
     private List<string> DisplayResult = new List<string>();
 
     private void ExtraWalletContentClick()
@@ -166,6 +203,13 @@
     {
         DisplayResult.Clear();
         DisplayResult.Add($"Wallet connected event.");
+    }
+
+    private async Task WalletConnectStartAsync(string walletKey)
+    {
+        DisplayResult.Clear();
+        DisplayResult.Add($"Wallet connect start event. Wallet Key: {walletKey}");
+        await Task.Delay(5000);
     }
 
     private void WalletDisconnected()
