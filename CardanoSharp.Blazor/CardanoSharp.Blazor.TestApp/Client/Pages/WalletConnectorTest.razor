@@ -132,6 +132,13 @@
 <div>
     <button @onclick="@(async e => await TestForceDisconnect())">Force Disconnect</button>
 </div>
+<hr />
+<div>
+    NUM REQUESTS: <input type="number" @bind="RateLimitRequestCount" />
+</div>
+<div>
+    <button @onclick="@(async e => await TestRateLimit())">Test Rate Limit</button>
+</div>
 
 @code {
     private WalletConnector? myWebWallets;
@@ -143,7 +150,8 @@
     private ulong SignTxCoin = 0; 
     private ulong GetUtxosAmount = 0; 
     private int GetUtxosPaginatePage = -1; 
-    private int GetUtxosPaginateLimit = -1; 
+    private int GetUtxosPaginateLimit = -1;
+    private int RateLimitRequestCount = 200;
 
     private List<string> DisplayResult = new List<string>();
 
@@ -169,7 +177,7 @@
     private void WalletInitComplete()
     {
         DisplayResult.Clear();
-		DisplayResult.Add($"Wallet init complete event.");
+        DisplayResult.Add($"Wallet init complete event.");
     }
 
     private void TestGetWalletExtensionStates()
@@ -428,6 +436,36 @@
     private async ValueTask TestForceDisconnect()
     {
         await myWebWallets!.DisconnectWalletAsync().ConfigureAwait(false);
+    }
+
+    private async ValueTask TestRateLimit()
+    {
+        DisplayResult.Clear();
+
+        if (myWebWallets == null || !myWebWallets.Initialized)
+        {
+            DisplayResult.Add("Wallet not initialized");
+            return;
+        }
+
+        if (!myWebWallets.Connected)
+        {
+            DisplayResult.Add("Wallet not connected");
+        }
+
+        try
+        {
+            for (int i = 0; i < RateLimitRequestCount; i++)
+			{
+				var result = await myWebWallets.GetUtxos();
+				DisplayResult.Add($"Request {i + 1} - UTXO Count: {result.Length}");
+			}
+            DisplayResult.Add("Finished rate limit test without error");
+        }
+        catch (Exception ex)
+        {
+            DisplayResult.Add($"ERROR: {ex.ToString()}");
+        }
     }
 
     private async ValueTask TestSignTx()
